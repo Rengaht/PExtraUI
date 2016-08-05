@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxOsc.h"
-#include "ofxHttpUtils.h"
+#include "HttpFormManager.h"
 #include "GlobalParam.h"
 #include "GlobalSource.h"
 #include "SceneBase.h"
@@ -47,6 +47,8 @@ class ofApp : public ofBaseApp{
 
 		ofVideoGrabber _webcam;
 		vector<ofImage> _img_rec;
+		ofFbo _tmp_fbo;
+		int _fr_save;
 		void saveWebcamImage();
 
 
@@ -59,9 +61,14 @@ class ofApp : public ofBaseApp{
 
 
 		//upload
-		ofxHttpUtils _http_util;
-		void newResponse(ofxHttpResponse &response);
+		/*ofxHttpUtils _http_util;
+		void newResponse(ofxHttpResponse &response);*/
+		HttpFormManager _form_manager;
+		void newResponse(HttpFormResponse &response);
+
 		void uploadSticker(string path_);
+
+		
 };
 
 

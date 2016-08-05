@@ -24,11 +24,12 @@ void SceneBase::draw(bool debug_mode){
 	float alpha_=255.0*_anim_in.getPortion()*(1-_anim_out.getPortion());
 	ofSetColor(255,alpha_);
 		
+		drawBack();
+		
 		if(_img_back.bAllocated()){
 				_img_back.draw(0,0,ofGetWidth(),ofGetHeight());
 		}
-	
-		drawContent();
+		drawFront();
 
 	ofPopStyle();
 
@@ -59,6 +60,7 @@ void SceneBase::update(float dt_){
 		case BeforeInit:			
 			if(f_>=_stop_point){
 				//cout<<"pause at "<<f_;
+				_source->_mov_back.setFrame(_stop_point);
 				_source->_mov_back.setPaused(true);
 				init();
 			}

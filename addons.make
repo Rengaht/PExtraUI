@@ -1,4 +1,4 @@
 ofxHapPlayer
-ofxHttpUtils-master
+ofxHttpForm-master
 ofxOsc
 ofxXmlSettings

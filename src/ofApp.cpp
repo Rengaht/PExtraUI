@@ -21,11 +21,18 @@ void ofApp::setup(){
 	if(webcam_fail){
 		ofLog()<<"[Device Check] webcam fail!";
 	}
+	
+	_tmp_fbo.allocate(_webcam.getWidth(),_webcam.getHeight(),GL_RGB);
+	int mfr=60;
+	_img_rec=vector<ofImage>(mfr);
+	for(int i=0;i<mfr;++i) _img_rec[i].allocate(_webcam.getWidth(),_webcam.getHeight(),OF_IMAGE_COLOR);
 
 	loadScene();
 	_source->_mov_back.play();
 	
 	initCommunication();
+
+
 
 	changeScene(SceneMode::SLEEP);
 }
@@ -67,10 +74,12 @@ void ofApp::mouseReleased(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	switch(key){
-	case 'q':
-		createNewUser();
-		uploadSticker(_global->OutputFolder+"st_201685039.png");
-		break;
+		case 'a':
+			sendRecord();
+			break;
+		case 's':
+			sendCompose();
+			break;
 	}
 }
 
@@ -137,12 +146,12 @@ void ofApp::changeScene(SceneMode mode_){
 		int mfr=_img_rec.size();
 		ofImage grab_photo[3];
 		grab_photo[0]=_img_rec[0];
-		grab_photo[1]=_img_rec[mfr/2];
-		grab_photo[2]=_img_rec[mfr-1];
+		grab_photo[1]=_img_rec[_fr_save/2];
+		grab_photo[2]=_img_rec[_fr_save-1];
 
-		((SceneSticker*)_scene[mode_])->setStickerImage(((SceneSign*)_scene[SceneMode::SIGN])->getSignImage(),grab_photo);
-		_img_rec.clear();
+		((SceneSticker*)_scene[mode_])->setStickerImage(((SceneSign*)_scene[SceneMode::SIGN])->getSignImage(),grab_photo);		
 	}
+
 	_icur_scene=mode_;
 	_scene[_icur_scene]->prepareInit();
 
@@ -157,25 +166,54 @@ void ofApp::createNewUser(){
 
 
 void ofApp::uploadSticker(string path_){
-	ofxHttpForm form;
+	/*ofxHttpForm form;
 	form.action=_global->ServerURL+"upload/action.php";
 	form.method=OFX_HTTP_POST;	
 	form.addFormField("action", "upload_sticker");
 	form.addFormField("guid", _user_id);
 	form.addFile("file",path_);
-	_http_util.submitForm(form);
+	_http_util.submitForm(form);*/
+
+	HttpForm f=HttpForm(_global->ServerURL+"upload/action.php");
+	f.addFile("file",path_,"image/png");
+	f.addFormField("action","upload_sticker");
+	f.addFormField("guid",_user_id);
+
+	_form_manager.submitForm(f,false);
+
 
 }
 
-void ofApp::newResponse(ofxHttpResponse& response){
-	ofLog()<<"http response: "<<response.status<<"  "<<response.responseBody;
+//void ofApp::newResponse(ofxHttpResponse& response){
+//	ofLog()<<"http response: "<<response.status<<"  "<<response.responseBody;
+//}
+
+void ofApp::newResponse(HttpFormResponse &response){
+	ofLog()<<"http response: "<<response.status<<" "<<response.responseBody;
+	if(response.status==200){
+		sendCompose();
+	}
 }
 
 void ofApp::saveWebcamImage(){
 	
+	/*_tmp_fbo.begin();
+		_webcam.draw(0,0);
+	_tmp_fbo.end();
+
+	ofPixels pix_;
+	_tmp_fbo.readToPixels(pix_);
 	ofImage img_;
-	img_.setFromPixels(_webcam.getPixels(),_webcam.getWidth(),_webcam.getHeight(),OF_IMAGE_COLOR);
-	_img_rec.push_back(img_);
+	img_.setFromPixels(pix_);*/
+	
+	if(_fr_save>=0 && _fr_save<60){
+		_img_rec[_fr_save].setFromPixels(_webcam.getPixels());
+		_fr_save++;
+	}
+
+	/*img_.allocate(_webcam.getWidth(),_webcam.getHeight(),OF_IMAGE_COLOR);
+	img_.setFromPixels(_webcam.getPixels(),_webcam.getWidth(),_webcam.getHeight(),OF_IMAGE_COLOR);*/
+	//_img_rec.push_back(img_);
 
 }
 
@@ -183,12 +221,21 @@ void ofApp::initCommunication(){
 	_osc_receive.setup(_global->OscPort);
 	_osc_sender.setup(_global->CameraOscIP,_global->CameraOscPort);
 
-	_http_util.setTimeoutSeconds(160);
-	_http_util.start();
-	ofAddListener(_http_util.newResponseEvent,this,&ofApp::newResponse);
+	/*_http_util.setTimeoutSeconds(160);
+	_http_util.start();*/
+
+	_form_manager.setVerbose(true);
+	_form_manager.setTimeOut(180);
+	ofAddListener(_form_manager.formResponseEvent, this, &ofApp::newResponse);
+
+
+	//ofAddListener(_http_util.newResponseEvent,this,&ofApp::newResponse);
 
 }
 void ofApp::sendRecord(){
+
+	ofLog()<<"Send video start...";
+
 	ofxOscMessage message_;
 	message_.setAddress("/video_start");
 	message_.addStringArg(_user_id);
@@ -196,6 +243,8 @@ void ofApp::sendRecord(){
 }
 
 void ofApp::sendCompose(){
+	
+	ofLog()<<"Send compose start...";
 	ofxOscMessage message_;
 	message_.setAddress("/compose_start");
 	message_.addStringArg(_user_id);

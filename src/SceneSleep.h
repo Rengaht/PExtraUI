@@ -12,10 +12,10 @@ public:
 		_arr_button[0]=PButton(ofRectangle(816*_ptr_app->_SR,772*_ptr_app->_SR,292*_ptr_app->_SR,292*_ptr_app->_SR),0);
 		_mbutton=1;
 	}
-	void drawContent(){
+	void drawFront(){
 		ofPushStyle();
 		ofSetColor(255,255.0*_anim_in.getPortion()*(1.0-_anim_out.getPortion()));
-			_source->_mov_demo.draw(ofGetWidth()/2-_source->_mov_demo.getWidth()/2,20);
+			_source->_mov_demo.draw(ofGetWidth()/2-1280*_ptr_app->_SR/2,40*_ptr_app->_SR,1280*_ptr_app->_SR,720*_ptr_app->_SR);
 		ofPopStyle();
 	}
 	void init(){

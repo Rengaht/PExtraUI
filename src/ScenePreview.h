@@ -22,16 +22,24 @@ public:
 		_region_pos=ofVec2f(570*_ptr_app->_SR,382*_ptr_app->_SR);
 		_region_size=ofVec2f(778*_ptr_app->_SR,528*_ptr_app->_SR);
 	}
-	void drawContent(){
+	void drawBack(){
 		
-		if(_cur_fr>=0 && _cur_fr<_mfr)
-			_ptr_app->_img_rec[int(_cur_fr)].draw(_region_pos.x,_region_pos.y,_region_size.x,_region_size.y);
+		if(_cur_fr>=0 && _cur_fr<_mfr){
+			float pw=_ptr_app->_img_rec[int(_cur_fr)].getWidth();
+			float ph=_ptr_app->_img_rec[int(_cur_fr)].getHeight();
+		
+			float sw=ph*(_region_size.x/_region_size.y);
+
+			_ptr_app->_img_rec[int(_cur_fr)].drawSubsection(_region_pos.x,_region_pos.y,_region_size.x,_region_size.y,
+				pw*.5-sw*.5+sw,0,-sw,ph);
+		}
 		
 	}
 	void init(){
 		SceneBase::init();
 		_cur_fr=0;
-		_mfr=_ptr_app->_img_rec.size();
+		_mfr=_ptr_app->_fr_save;
+		ofLog()<<"preveiw with "<<_mfr<<" frames";
 	}
 	void update(float dt_){
 		SceneBase::update(dt_);
@@ -53,8 +61,7 @@ public:
 				prepareEnd();
 				break;
 			case 1:
-				_ptr_app->sendCompose();
-
+				
 				_redo=false;
 				prepareEnd();
 				break;

@@ -31,13 +31,14 @@ class SceneBase{
 		SceneBase(ofApp *set_ptr,GlobalSource *source_,string back_file_,int stop_);
 		virtual ~SceneBase();
 
-		void draw(bool debug_mode=false);
-		virtual void drawContent(){}
+		virtual void draw(bool debug_mode=false);
+		virtual void drawFront(){}
+		virtual void drawBack(){}
 
 		void handleMousePressed(float mouse_x,float mouse_y);
 		
 		
-		void prepareInit();
+		virtual void prepareInit();
 		void prepareEnd();
 
 		

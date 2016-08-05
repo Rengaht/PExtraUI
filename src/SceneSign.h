@@ -23,8 +23,7 @@ public:
 		
 
 	}
-	void drawContent(){
-		
+	void drawFront(){
 		
 		_fbo_brush.draw(_region_pos.x,_region_pos.y,_region_size.x,_region_size.y);
 
@@ -94,13 +93,13 @@ public:
 			&& (_region_pos.y<=my_ && _region_pos.y+_region_size.y>=my_);
 	}
 
-	ofImage getSignImage(){
-		ofImage img_;
+	ofFbo getSignImage(){
+		/*ofImage img_;
 		ofPixels pixels;
 		_fbo_brush.readToPixels(pixels);
 		img_.setFromPixels(pixels,_fbo_brush.getWidth(),_fbo_brush.getHeight(),OF_IMAGE_COLOR);
-		return img_;
-
+		return img_;*/
+		return _fbo_brush;
 	}
 };
 

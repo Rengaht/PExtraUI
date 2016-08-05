@@ -1,0 +1,4 @@
+ofxHapPlayer
+ofxHttpUtils-master
+ofxOsc
+ofxXmlSettings

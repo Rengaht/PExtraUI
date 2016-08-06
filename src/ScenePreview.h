@@ -13,14 +13,14 @@ private:
 	int _mfr;
 
 public:
-	ScenePreview(ofApp *set_ptr,GlobalSource *source_):SceneBase(set_ptr,source_,"preview.png",327){
+	ScenePreview(ofApp *set_ptr,GlobalSource *source_):SceneBase(set_ptr,source_,"preview_2.png",327){
 		_arr_button=new PButton[2];
 		_arr_button[0]=PButton(ofRectangle(188*_ptr_app->_SR,672*_ptr_app->_SR,220*_ptr_app->_SR,220*_ptr_app->_SR),0);
 		_arr_button[1]=PButton(ofRectangle(1518*_ptr_app->_SR,672*_ptr_app->_SR,220*_ptr_app->_SR,220*_ptr_app->_SR),1);
 		_mbutton=2;
 
-		_region_pos=ofVec2f(570*_ptr_app->_SR,382*_ptr_app->_SR);
-		_region_size=ofVec2f(778*_ptr_app->_SR,528*_ptr_app->_SR);
+		_region_pos=ofVec2f(562*_ptr_app->_SR,364*_ptr_app->_SR);
+		_region_size=ofVec2f(800*_ptr_app->_SR,554*_ptr_app->_SR);
 	}
 	void drawBack(){
 		

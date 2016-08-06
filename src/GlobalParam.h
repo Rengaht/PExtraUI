@@ -12,6 +12,7 @@ class GlobalParam{
 public:
 
 		static string ParamFilePath;
+		static string PosFilePath;
 		
 		float RecordSpan;
 		float PreviewRate;
@@ -28,9 +29,11 @@ public:
 
 		string ServerURL;
 
+		vector<ofVec2f> _frame_pos;
 
 		GlobalParam(){
 			readParam();
+			
 		}
 		static GlobalParam* GetInstance(){
 			if(!_instance)
@@ -66,6 +69,8 @@ public:
 			ServerURL=_param.getValue("SERVER_URL","");
 			if(!file_exist) saveParameterFile();
 
+			readEndingPos();
+
 		}
 		void saveParameterFile(){
 
@@ -95,6 +100,28 @@ public:
 
 			_param.save(ParamFilePath);
 
+
+		}
+
+		void readEndingPos(){
+
+			_frame_pos.clear();
+
+			ofxXmlSettings _param;
+			if (_param.loadFile(PosFilePath)){
+				ofLog()<<"pos xml loaded!";
+			}else{
+				ofLog()<<"Unable to load xml check data/ folder";
+				return;
+			}
+			int mfr=_param.getNumTags("FRAME");
+
+			for(int i=0;i<mfr;++i){
+				ofVec2f pos;
+				pos.x=_param.getAttribute("FRAME","X",0,i);
+				pos.y=_param.getAttribute("FRAME","Y",0,i);
+				_frame_pos.push_back(pos);
+			}
 
 		}
 

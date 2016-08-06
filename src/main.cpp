@@ -4,6 +4,7 @@
 //========================================================================
 float FrameAnimation::millis_per_frame=16.6667;
 string GlobalParam::ParamFilePath="_param.xml";
+string GlobalParam::PosFilePath="_pos.xml";
 
 int main(){
 	ofSetupOpenGL(1280,720,OF_WINDOW);			// <-------- setup the GL context

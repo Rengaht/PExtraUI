@@ -46,7 +46,13 @@ private:
 		createSingleSticker(back_);
 		string path_=_ptr_app->_global->OutputFolder+"st_"+id_+".png";
 		_img_final_sticker.saveImage(path_);
-		_ptr_app->uploadSticker(path_);
+
+		string thpath_=_ptr_app->_global->OutputFolder+"thumb_"+id_+".png";
+		int f_=_ptr_app->_frame_to_grab[_sel];
+		_ptr_app->_img_rec[f_].mirror(false,true);
+		_ptr_app->_img_rec[f_].saveImage(thpath_);
+
+		_ptr_app->uploadSticker(path_,thpath_);
 
 		ofFbo print_;
 		print_.allocate(1500,900);
@@ -167,6 +173,8 @@ public:
 	}
 	void end(){
 		SceneBase::end();
+		
+		
 		_ptr_app->changeScene(ofApp::SceneMode::END);
 
 	}
@@ -184,14 +192,20 @@ public:
 				break;
 			case 2:
 				string id_=_ptr_app->_user_id;
-				
 				createStickerPrint(id_,_img_sticker[_sel]);
-				
+				/*createPrint(_img_final_sticker);
+
+				string id_=_ptr_app->_user_id;
+				int f_=_ptr_app->_frame_to_grab[_sel];
+				ofImage thumb_=_ptr_app->_img_rec[f_];
+				_ptr_app->_sticker_thread->setup(id_,_img_final_sticker,thumb_);
+				_ptr_app->_sticker_thread->startThread();*/
+
 				prepareEnd();
 				break;
 		}
 	}
-	void setStickerImage(ofFbo sign_,ofImage* img_){
+	void setStickerBackImage(ofFbo sign_,ofImage* img_){
 		_img_sign=sign_;
 		for(int i=0;i<3;++i) _img_sticker[i]=createSticker(img_[i]);
 	}

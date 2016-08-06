@@ -6,7 +6,7 @@
 #include "GlobalParam.h"
 #include "GlobalSource.h"
 #include "SceneBase.h"
-
+#include "StickerCreate.h"
 
 class ofApp : public ofBaseApp{
 	private:
@@ -50,7 +50,7 @@ class ofApp : public ofBaseApp{
 		ofFbo _tmp_fbo;
 		int _fr_save;
 		void saveWebcamImage();
-
+		int _frame_to_grab[3];
 
 		//OSC
 		ofxOscReceiver _osc_receive;
@@ -66,9 +66,11 @@ class ofApp : public ofBaseApp{
 		HttpFormManager _form_manager;
 		void newResponse(HttpFormResponse &response);
 
-		void uploadSticker(string path_);
+		void uploadFile(string& id_);
+		void uploadSticker(string sticker_path_,string thumb_path_);
 
-		
+		CreateSticker* _sticker_thread;
+		//void gotoEndScene(string& id_);
 };
 
 

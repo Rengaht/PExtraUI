@@ -263,6 +263,9 @@
     <ClInclude Include="src\PButton.h">
       <Filter>src\base</Filter>
     </ClInclude>
+    <ClInclude Include="src\StickerCreate.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

@@ -27,9 +27,16 @@ void ofApp::setup(){
 	_img_rec=vector<ofImage>(mfr);
 	for(int i=0;i<mfr;++i) _img_rec[i].allocate(_webcam.getWidth(),_webcam.getHeight(),OF_IMAGE_COLOR);
 
+	_frame_to_grab[0]=1;
+	_frame_to_grab[1]=mfr/2;
+	_frame_to_grab[2]=mfr-2;
+
 	loadScene();
 	_source->_mov_back.play();
 	
+	//_sticker_thread=new CreateSticker(_global->PrintSize,_global->OutputFolder);
+	///ofAddListener(_sticker_thread->_ready_to_upload,this,&ofApp::uploadFile);
+
 	initCommunication();
 
 
@@ -62,9 +69,11 @@ void ofApp::update(){
 void ofApp::draw(){
 	//ofBackground(0);
 	_source->_mov_back.draw(0,0,ofGetWidth(),ofGetHeight());
+#ifdef _DEBUG
 	_scene[_icur_scene]->draw(true);
-
-
+#else
+	_scene[_icur_scene]->draw(false);
+#endif // DEBUG
 }
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
@@ -79,6 +88,13 @@ void ofApp::keyPressed(int key){
 			break;
 		case 's':
 			sendCompose();
+			break;
+		case 'f':
+			ofToggleFullscreen();
+			_SR=float(ofGetWidth())/1920.0;
+			break;
+		case 'r':
+			changeScene(SceneMode::SLEEP);
 			break;
 	}
 }
@@ -145,11 +161,9 @@ void ofApp::changeScene(SceneMode mode_){
 	if(mode_==SceneMode::STICKER){
 		int mfr=_img_rec.size();
 		ofImage grab_photo[3];
-		grab_photo[0]=_img_rec[0];
-		grab_photo[1]=_img_rec[_fr_save/2];
-		grab_photo[2]=_img_rec[_fr_save-1];
-
-		((SceneSticker*)_scene[mode_])->setStickerImage(((SceneSign*)_scene[SceneMode::SIGN])->getSignImage(),grab_photo);		
+		for(int i=0;i<3;++i) grab_photo[i]=_img_rec[_frame_to_grab[i]];
+		
+		((SceneSticker*)_scene[mode_])->setStickerBackImage(((SceneSign*)_scene[SceneMode::SIGN])->getSignImage(),grab_photo);		
 	}
 
 	_icur_scene=mode_;
@@ -164,8 +178,16 @@ void ofApp::createNewUser(){
 }
 
 
+void ofApp::uploadFile(string& id_){
 
-void ofApp::uploadSticker(string path_){
+	_icur_scene=SceneMode::END;
+	_scene[_icur_scene]->prepareInit();
+
+	string s_=_global->OutputFolder+"st_"+id_+".png";
+	string t_=_global->OutputFolder+"thumb_"+id_+".png";
+	uploadSticker(s_,t_);
+}
+void ofApp::uploadSticker(string sticker_path_,string thumb_path_){
 	/*ofxHttpForm form;
 	form.action=_global->ServerURL+"upload/action.php";
 	form.method=OFX_HTTP_POST;	
@@ -175,7 +197,8 @@ void ofApp::uploadSticker(string path_){
 	_http_util.submitForm(form);*/
 
 	HttpForm f=HttpForm(_global->ServerURL+"upload/action.php");
-	f.addFile("file",path_,"image/png");
+	f.addFile("file",sticker_path_,"image/png");
+	f.addFile("thumb",thumb_path_,"image/png");
 	f.addFormField("action","upload_sticker");
 	f.addFormField("guid",_user_id);
 
@@ -224,7 +247,7 @@ void ofApp::initCommunication(){
 	/*_http_util.setTimeoutSeconds(160);
 	_http_util.start();*/
 
-	_form_manager.setVerbose(true);
+	//_form_manager.setVerbose(true);
 	_form_manager.setTimeOut(180);
 	ofAddListener(_form_manager.formResponseEvent, this, &ofApp::newResponse);
 

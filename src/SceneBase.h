@@ -45,6 +45,7 @@ class SceneBase{
 		virtual void init();
 		virtual void update(float dt_);
 		virtual void end();
+		virtual void reset();
 
 		virtual void buttonEvent(int index){}
 

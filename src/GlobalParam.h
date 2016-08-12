@@ -19,6 +19,7 @@ public:
 		
 		string OutputFolder;
 		string OrderFolder;
+		string QRcodeFolder;
 
 		ofVec2f MaskSize,MaskPos;
 		ofVec2f PrintSize;
@@ -30,6 +31,11 @@ public:
 		string ServerURL;
 
 		vector<ofVec2f> _frame_pos;
+
+		string ArduinoPort;
+		string SlackAddress;
+
+
 
 		GlobalParam(){
 			readParam();
@@ -55,6 +61,7 @@ public:
 			
 			OutputFolder=_param.getValue("OUTPUT_FOLDER","");
 			OrderFolder=_param.getValue("ORDER_FOLDER","");
+			QRcodeFolder=_param.getValue("QRCODE_FOLDER","");
 
 			MaskSize=ofVec2f(_param.getValue("MASK_WIDTH",600),_param.getValue("MASK_HEIGHT",600));
 			MaskPos=ofVec2f(_param.getValue("MASK_X",0),_param.getValue("MASK_Y",0));
@@ -67,6 +74,11 @@ public:
 			CameraOscPort=_param.getValue("CAMERA_OSC_PORT",12777);
 
 			ServerURL=_param.getValue("SERVER_URL","");
+
+			ArduinoPort=_param.getValue("ARDUINO_PORT","COM13");
+			SlackAddress=_param.getValue("SLACK_ADDRESS","");
+
+
 			if(!file_exist) saveParameterFile();
 
 			readEndingPos();
@@ -82,6 +94,7 @@ public:
 			
 			_param.setValue("OUTPUT_FOLDER",OutputFolder);
 			_param.setValue("ORDER_FOLDER",OrderFolder);
+			_param.setValue("QRCODE_FOLDER",QRcodeFolder);
 
 			_param.setValue("MASK_WIDTH",MaskSize.x);
 			_param.setValue("MASK_HEIGHT",MaskSize.y);
@@ -97,6 +110,10 @@ public:
 			_param.setValue("CAMERA_OSC_PORT",CameraOscPort);
 
 			_param.setValue("SERVER_URL",ServerURL);
+
+			_param.setValue("ARDUINO_PORT",ArduinoPort);
+
+			_param.setValue("SLACK_ADDRESS",SlackAddress);
 
 			_param.save(ParamFilePath);
 

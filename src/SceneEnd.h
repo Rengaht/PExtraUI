@@ -12,6 +12,8 @@ private:
 	ofImage _img_sticker;
 
 	FrameAnimation _anim_move[3];
+	FrameAnimation _anim_notice_sound;
+
 	//ofVec2f _sticker_pos[4];
 	float _sticker_rotate[4];
 	ofVec2f _sticker_size;
@@ -20,13 +22,16 @@ private:
 
 
 public:
-	SceneEnd(ofApp *set_ptr,GlobalSource *source_):SceneBase(set_ptr,source_,"empty.png",514){
+	SceneEnd(ofApp *set_ptr,GlobalSource *source_):SceneBase(set_ptr,source_,"empty.png",809){
 		_mbutton=0;
 		float mpf=1000.0/30.0;
 		_anim_move[0]=FrameAnimation(15.0*mpf,5.0*mpf);
 		_anim_move[1]=FrameAnimation(10.0*mpf,20.0*mpf);
 		_anim_move[2]=FrameAnimation(10.0*mpf,40.0*mpf);
-		_anim_fade=FrameAnimation(7.0*mpf,43.0*mpf);
+		//_anim_fade=FrameAnimation(7.0*mpf,43.0*mpf);
+		_anim_fade=FrameAnimation(9.0*mpf,42.0*mpf);
+
+		_anim_notice_sound=FrameAnimation(103*mpf);
 
 		/*_sticker_keyframe[0]=405;
 		_sticker_keyframe[1]=420;
@@ -41,8 +46,8 @@ public:
 		_sticker_pos[3]=ofVec2f(576*_ptr_app->_SR,141*_ptr_app->_SR);*/
 		
 		_sticker_rotate[0]=0;
-		_sticker_rotate[1]=-30;
-		_sticker_rotate[2]=20;
+		_sticker_rotate[1]=30;
+		_sticker_rotate[2]=-20;
 		_sticker_rotate[3]=0;
 
 		_sticker_size=ofVec2f(758*_ptr_app->_SR,758*_ptr_app->_SR);
@@ -55,10 +60,14 @@ public:
 
 		if(_status==SceneStatus::BeforeInit){
 			ofPushStyle();
-			ofSetColor(255,255.0-255.0*_anim_fade.getPortion());
 
-				float fr_=_source->_mov_back.getCurrentFrame();
+			float fr_=_source->_mov_back.getCurrentFrame();
 
+			float a_=ofLerp(0.0,255.0,ofClamp(ofMap(fr_,442,451,0,1.0),0,1));
+			//cout<<a_<<" ";
+			ofSetColor(255,255.0-255.0*a_);
+
+			
 				//float x_=_sticker_pos[0].x;
 				//float y_=_sticker_pos[0].y;
 				float r_=_sticker_rotate[0];
@@ -93,7 +102,7 @@ public:
 				ofRotate(r_);
 				ofTranslate(-_sticker_size.x/2,-_sticker_size.y/2);
 
-				_img_sticker.draw(0,0,_sticker_size.x,_sticker_size.y);		
+					_img_sticker.draw(0,0,_sticker_size.x,_sticker_size.y);		
 
 				ofPopMatrix();
 			ofPopStyle();
@@ -109,15 +118,23 @@ public:
 
 		for(int i=0;i<3;++i) _anim_move[i].restart();
 		_anim_fade.restart();
+		_anim_notice_sound.restart();
 	}
 	void init(){
 		SceneBase::init();
 		_source->_mov_back.setPaused(false);
+
 	}
 	void update(float dt_){
 		SceneBase::update(dt_);
 		for(int i=0;i<3;++i) _anim_move[i].update(dt_);
 		_anim_fade.update(dt_);
+		_anim_notice_sound.update(dt_);
+		if(_anim_notice_sound.getPortion()==1){
+			_source->_soundfx[4].play();
+			_anim_notice_sound.reset();
+		}
+
 
 		if(_status==SceneStatus::Due && _source->_mov_back.getIsMovieDone()){
 			prepareEnd();
@@ -125,10 +142,12 @@ public:
 	}
 	void end(){
 		SceneBase::end();
-		_ptr_app->changeScene(ofApp::SceneMode::SLEEP);
+		
 		_source->_mov_back.setPaused(false);
 		_source->_mov_back.play();
 		_source->_mov_back.setFrame(0);
+
+		_ptr_app->changeScene(ofApp::SceneMode::SLEEP);
 	}
 
 	void buttonEvent(int index){

@@ -14,6 +14,7 @@ class ofApp : public ofBaseApp{
 		int _icur_scene;
 
 	public:
+		bool _ADJUST_MODE;
 		float _SR;
 
 		enum SceneMode {SLEEP,SIGN,RECORD,PREVIEW,STICKER,END};
@@ -71,6 +72,17 @@ class ofApp : public ofBaseApp{
 
 		CreateSticker* _sticker_thread;
 		//void gotoEndScene(string& id_);
+
+		bool _redo_once;
+
+		ofSerial _serial;
+		void sendBlowerSignal(bool blow_);
+
+		bool _got_video_finish;
+		void createQRCodeOrder(string _qrid);
+
+
+		void sendSlackMessage(string message_);
 };
 
 

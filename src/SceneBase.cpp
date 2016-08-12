@@ -47,6 +47,7 @@ void SceneBase::handleMousePressed(float mouse_x, float mouse_y){
 	for(int i=0;i<_mbutton;++i) 
 		if(_arr_button[i].isEnable()){
 			if(_arr_button[i].checkClicked(mouse_x,mouse_y)){
+				_source->_soundfx[_arr_button[i].getSoundType()].play();
 				buttonEvent(_arr_button[i].getIndex());
 				//ptr_app->playSound(arr_button[i].getSoundType());
 			}
@@ -104,10 +105,16 @@ void SceneBase::init(){
 	_anim_out.reset();
 }
 
-void SceneBase::end(){
-	ofLog()<<"End scene";
-	_status=SceneStatus::End;
+void SceneBase::reset(){
+	ofLog()<<"Reset scene";
 	_anim_in.reset();
 	_anim_out.reset();
+}
+
+void SceneBase::end(){
+	reset();
+	ofLog()<<"End scene";
+	_status=SceneStatus::End;
+	
 }
 

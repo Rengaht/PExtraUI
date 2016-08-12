@@ -10,10 +10,10 @@ private:
 	ofVec2f _region_pos,_region_size;
 	ofFbo _fbo_brush;
 public:
-	SceneSign(ofApp *set_ptr,GlobalSource *source_):SceneBase(set_ptr,source_,"sign.png",150){
+	SceneSign(ofApp *set_ptr,GlobalSource *source_):SceneBase(set_ptr,source_,"sign.png",154){
 		_arr_button=new PButton[2];
 		_arr_button[0]=PButton(ofRectangle(188*_ptr_app->_SR,672*_ptr_app->_SR,220*_ptr_app->_SR,220*_ptr_app->_SR),0);
-		_arr_button[1]=PButton(ofRectangle(1518*_ptr_app->_SR,672*_ptr_app->_SR,220*_ptr_app->_SR,220*_ptr_app->_SR),1);
+		_arr_button[1]=PButton(ofRectangle(1518*_ptr_app->_SR,672*_ptr_app->_SR,220*_ptr_app->_SR,220*_ptr_app->_SR),1,1);
 		_mbutton=2;
 
 		_region_pos=ofVec2f(570.0*_ptr_app->_SR,382.0*_ptr_app->_SR);
@@ -49,11 +49,11 @@ public:
 			//ofPushStyle();
 			ofFill();
 			ofSetColor(0);
-			float sp_=1.0/ofMap(speed,0,10,1,10);
+			float sp_=1.0/ofMap(speed,0,20,1,20);
 			for(float i=0;i<=1;i+=sp_){
 				float x_=ofLerp(p_.x,m_.x,i);
 				float y_=ofLerp(p_.y,m_.y,i);
-				ofEllipse(x_,y_,8,8);					
+				ofEllipse(x_,y_,12,12);					
 			}
 			//ofPopStyle();
 		
